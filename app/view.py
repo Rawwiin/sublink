@@ -15,17 +15,20 @@ def get_country_emoji(hostname):
         pattern = re.compile(r'^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$')
         return bool(pattern.match(url))
 
-    ip = hostname
-    if is_valid_url(ip):
-        ip = socket.gethostbyname(hostname)
-    response = requests.get(f"http://ipwho.is/{ip}")
-    if response.status_code == 200:
-        js = response.json()
-        flag = js.get('flag')
-        emoji = flag.get("emoji")
-        # print(js)
-        return emoji
-    return hostname
+    try:
+        ip = hostname
+        if is_valid_url(ip):
+            ip = socket.gethostbyname(hostname)
+        response = requests.get(f"http://ipwho.is/{ip}")
+        if response.status_code == 200:
+            js = response.json()
+            flag = js.get('flag')
+            emoji = flag.get("emoji")
+            # print(js)
+            return emoji
+        return hostname
+    except Exception:
+        return hostname
 def save_ip_address(): # 获取ip地址
     ip_address = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     params = {
